@@ -1,0 +1,15 @@
+{
+  "name": "dota2-gsi",
+  "version": "1.0.0",
+  "description": "Dota 2 Game State Integration server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dota2",
+    "steam"
+  ],
+  "author": "xzion",
+  "license": "ISC"
+}
