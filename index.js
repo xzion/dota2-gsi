@@ -93,7 +93,7 @@ var d2gsi = function(options) {
         Update_gamestate, 
         Process_section('player'),
         Process_section('hero'),
-        Process_section('map');
+        Process_section('map'),
         Process_section('provider'),
         New_data);
 
