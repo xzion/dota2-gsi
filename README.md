@@ -1,6 +1,6 @@
 # Node.js Dota 2 GSI module
 
-`dota2-gsi` provides a event driven interface for Dota 2's live gamestate data. When configured, the Dota client will send regular messages to the `dota2-gsi` server, which emits an event for each attribute whenever it changes.
+`dota2-gsi` provides an event driven interface for Dota 2's live gamestate data. When configured, the Dota client will send regular messages to the `dota2-gsi` server, which emits an event for each attribute whenever it changes.
 
 ## Installation
 
@@ -207,7 +207,7 @@ For more information, see the [CS:GO Gamestate Integraton page](https://develope
 
 ## Caveats
 
-The data provided is fairly extensive, but it is specific to the player and hero running the Dota 2 client. The only way to get live information about all players in the game is to have each player configure their Dota client to point to the same `dota2-gsi` server. This somewhat limits the usefulness of the interface for tournament production, it's only really viable in LAN scenarios. The other thing lacking is map position. I'd like to see Valve expand the interface in future to include live map position, and at least basic information about teammates.
+The data provided is fairly extensive, but it is specific to the player running the Dota 2 client. It does not provide any information to spectators or casters. The only way to get live information about all players in a game is to have each player configure their Dota client to point to the same `dota2-gsi` server. This somewhat limits the usefulness of the interface for tournament production; it's only really viable for LAN's. The other thing lacking is map position. I'd like to see Valve expand the interface in future to include live map position, and at least basic information about teammates.
 
 ## Credits
 
