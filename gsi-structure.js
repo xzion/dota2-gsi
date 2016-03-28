@@ -66,7 +66,7 @@ module.exports = {
         name: null,
         contains_rune: null,
         can_cast: null,
-        colldown: null,
+        cooldown: null,
         passive: null,
         charges: null
     },
