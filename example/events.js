@@ -12,5 +12,5 @@ server.events.on('newclient', function(client) {
     });
     client.on('abilities:ability0:can_cast', function(can_cast) {
         if (can_cast) console.log("Ability0 off cooldown!");
-    })
+    });
 });
