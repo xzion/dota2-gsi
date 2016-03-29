@@ -15,7 +15,6 @@
   "dependencies": {
     "express": "4.x.x",
     "body-parser": "1.x.x",
-    "events" : "1.x.x",
-    "extend" : "3.x.x"
+    "events" : "1.x.x"
   }
 }

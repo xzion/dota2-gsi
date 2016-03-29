@@ -1,7 +1,6 @@
 var express         = require('express');
 var bodyParser      = require('body-parser');
 var eventEmitter    = require('events').EventEmitter;
-var extend          = require('extend');
 
 var events = new eventEmitter();
 var clients = [];
@@ -73,7 +72,7 @@ function Process_changes(section) {
 }
 
 function Update_gamestate(req, res, next) {
-    extend(true, req.client.gamestate, req.body);
+    req.client.gamestate = req.body;
     next();
 }
 
