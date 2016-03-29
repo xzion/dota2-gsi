@@ -14,8 +14,6 @@ function gsi_client (ip, auth) {
 gsi_client.prototype.__proto__ = eventEmitter.prototype;
 
 function Check_client(req, res, next) {
-    console.log("Check client");
-
     // Check if this IP is already talking to us
     for (var i = 0; i < clients.length; i++) {
         if (clients[i].ip == req.ip) {
@@ -27,6 +25,7 @@ function Check_client(req, res, next) {
     // Create a new client
     clients.push(new gsi_client(req.ip, req.body.auth));
     req.client = clients[clients.length - 1];
+    req.client.gamestate = req.body;
 
     // Notify about the new client
     events.emit('newclient', clients[clients.length - 1]);
@@ -34,15 +33,41 @@ function Check_client(req, res, next) {
     next();
 }
 
-function Process_section(section) {
-    return function(req, res, next) {
-        console.log("Process section: " + section);
-        if (req.body.previously && req.body.previously[section]) {
-            Object.keys(req.body.previously[section]).forEach(function(key) {
-                req.client.emit(section+":"+key, req.body[section][key]);
-            });
-        }
+function Emit_all(prefix, obj, emitter) {
+    Object.keys(obj).forEach(function(key) {
+        // console.log("Emitting '"+prefix+key+"' - " + obj[key]);
+        emitter.emit(prefix+key, obj[key]);
+    });
+}
 
+function Recursive_emit(prefix, changed, body, emitter) {
+    Object.keys(changed).forEach(function(key) {
+        if (typeof(changed[key]) == 'object') {
+            if (body[key] != null) { // safety check
+                Recursive_emit(prefix+key+":", changed[key], body[key], emitter);
+            }
+        } else {
+            // Got a key
+            if (body[key] != null) {
+                if (typeof body[key] == 'object') {
+                    // Edge case on added:item/ability:x where added shows true at the top level
+                    // and doesn't contain each of the child keys
+                    Emit_all(prefix+key+":", body[key], emitter);
+                } else {
+                    // console.log("Emitting '"+prefix+key+"' - " + body[key]);
+                    emitter.emit(prefix+key, body[key]);
+                }
+            }
+        }
+    });
+}
+
+function Process_changes(section) {
+    return function(req, res, next) {
+        if (req.body[section]) {
+            // console.log("Starting recursive emit for '" + section + "'");
+            Recursive_emit("", req.body[section], req.body, req.client);
+        }
         next();
     }
 }
@@ -53,7 +78,7 @@ function Update_gamestate(req, res, next) {
 }
 
 function New_data(req, res) {
-    console.log("Parse complete");
+    req.client.emit('newdata', req.body);
     res.end();
 }
 
@@ -64,15 +89,13 @@ function Check_auth(tokens) {
                 (req.body.auth == tokens || // tokens was a single string or
                 (tokens.constructor === Array && // tokens was an array and
                 tokens.indexOf(req.body.auth) != -1))) { // containing the token
-                console.log("Valid auth");
                 next();
             } else {
                 // Not a valid auth, drop the message
-                console.log("Invalid auth " + req.body.auth);
+                console.log("Dropping message from IP: " + req.ip + ", no valid auth token");
                 res.end();
             }
         } else {
-            console.log("No tokens, valid auth");
             next();
         }
     }
@@ -87,14 +110,12 @@ var d2gsi = function(options) {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
 
-    app.post('/', 
-        Check_auth(tokens), 
-        Check_client, 
-        Update_gamestate, 
-        Process_section('player'),
-        Process_section('hero'),
-        Process_section('map'),
-        Process_section('provider'),
+    app.post('/',
+        Check_auth(tokens),
+        Check_client,
+        Update_gamestate,
+        Process_changes('previously'),
+        Process_changes('added'),
         New_data);
 
     var server = app.listen(port, function() {
@@ -102,6 +123,8 @@ var d2gsi = function(options) {
     });
 
     this.events = events;
+    this.port = port;
+    this.tokens = tokens;
     return this;
 }
 
