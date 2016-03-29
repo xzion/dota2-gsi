@@ -1,6 +1,6 @@
 # Node.js Dota 2 GSI module
 
-`dota2-gsi` provides an event driven interface for Dota 2's live gamestate data. When configured, the Dota client will send regular messages to the `dota2-gsi` server, which emits an event for each attribute whenever it changes.
+`dota2-gsi` provides an event driven interface for Dota 2's live GameState Integration data. When configured, the Dota client will send regular messages to the `dota2-gsi` server, which emits an event for each attribute whenever it changes.
 
 ## Installation
 
@@ -9,11 +9,11 @@
 ## Usage
 
 ```javascript
-var dota2-gsi = require('dota2-gsi');
-var server = new dota2-gsi([options]);
+var d2gsi = require('dota2-gsi');
+var server = new d2gsi([options]);
 ```
 
-The server can be configured by passing an object to the constructor [optional]
+The server can be configured by passing an optional object to the constructor:
 ```
 {
     port: The port that the server should listen on (default: 3000),
@@ -21,33 +21,41 @@ The server can be configured by passing an object to the constructor [optional]
 }
 ```
 
+The server has one member
+```
+server.events - An EventEmitter used to notify when new clients connect
+```
+
 ## Examples
 
 Using events
 ```javascript
-var dota2-gsi = require('dota2-gsi');
-var server = new dota2-gsi();
+var d2gsi = require('dota2-gsi');
+var server = new d2gsi();
 
-server.on('newclient', function(client) {
+server.events.on('newclient', function(client) {
     console.log("New client connection, IP address: " + client.ip + ", Auth token: " + client.auth);
 
-    client.on('player:kills', function(kills) {
-        console.log("Now on " + kills + " kills!");
+    client.on('player:activity', function(activity) {
+        if (activity == 'playing') console.log("Game started!");
     });
-    client.on('hero:alive', function(is_alive) {
-        if (!is_alive) console.log("You died!");
+    client.on('hero:level', function(level) {
+        console.log("Now level " + level);
     });
+    client.on('abilities:ability0:can_cast', function(can_cast) {
+        if (can_cast) console.log("Ability0 off cooldown!");
+    })
 });
 ```
 
 Polling the gamestate manually. There is no guarantee that all of the objects in the gamestate exist, so be sure to null check or use a try/catch when polling.
 ```javascript
-var dota2-gsi = require('dota2-gsi');
-var server = new dota2-gsi();
+var d2gsi = require('dota2-gsi');
+var server = new d2gsi();
 
 var clients = [];
 
-server.on('newclient', function(client) {
+server.events.on('newclient', function(client) {
     console.log("New client connection, IP address: " + client.ip + ", Auth token: " + client.auth);
     clients.push(client);
 });
@@ -63,8 +71,8 @@ setInterval(function() {
 
 Identifying different clients. Unique auth tokens are the easiest way to do this.
 ```javascript
-var dota2-gsi = require('dota2-gsi');
-var server = new dota2-gsi({
+var d2gsi = require('dota2-gsi');
+var server = new d2gsi({
     port: 9001,
     tokens: [
         "6hCG4n_team1_player1",
@@ -75,7 +83,7 @@ var server = new dota2-gsi({
     ]
 });
 
-server.on('newclient', function(client) {
+server.events.on('newclient', function(client) {
     if (client.auth == "6hCG4n_team1_player1") {
         console.log("Client 1:1 connected");
         client.on('hero:name', function(hero_name) {
@@ -87,7 +95,7 @@ server.on('newclient', function(client) {
 
 ## Clients and Events
 
-The server emits the `newclient` event whenever a new client connects (based on IP address), returning a reference to the new client object. Each client has three members:
+The server `events` member emits the `newclient` event whenever a new client connects (based on IP address), returning the new client object. Each client has three members:
 
 ```
 client.ip           - IP address of the client
@@ -95,9 +103,11 @@ client.auth         - Auth token used by the client (may be null)
 client.gamestate    - The latest gamestate received from the client
 ```
 
-Clients will emit the following events any time they change. All values are returned as strings.
+Clients will emit the following events any time they change.
 
 ```
+newdata - The entire raw json object sent from the Dota client
+
 provider:name
 provider:appid
 provider:version
@@ -152,27 +162,39 @@ hero:muted
 hero:break
 hero:has_debuff
 
-item:#:name
-item:#:contains_rune
-item:#:can_cast
-item:#:cooldown
-item:#:passive
-item:#:charges
+items:slot#:name
+items:slot#:contains_rune
+items:slot#:can_cast
+items:slot#:cooldown
+items:slot#:passive
+items:slot#:charges
+items:stash#:name
+items:stash#:contains_rune
+items:stash#:can_cast
+items:stash#:cooldown
+items:stash#:passive
+items:stash#:charges
 
-ability:#:name
-ability:#:level
-ability:#:can_cast
-ability:#:passive
-ability:#:ability_active
-ability:#:cooldown
-ability:#:ultimate
+abilities:ability#:name
+abilities:ability#:level
+abilities:ability#:can_cast
+abilities:ability#:passive
+abilities:ability#:ability_active
+abilities:ability#:cooldown
+abilities:ability#:ultimate
+abilities:attributes:level
 ```
 
 The gamestate object mirrors this structure. For example
-```javascript
-client.gamestate.hero.manapercent;
-client.gamestate.item[0].name;
 ```
+client.gamestate.hero.mana_percent
+client.gamestate.items.slot0.name
+```
+
+## Quirks
+* The client does not announce all keys in an 'added' event, so there's no initial emit for some child attributes. This includes all of `provider`, `map`, and some of `player`. If you're trying to initialise values such as `map:isdaytime`, the easiest way to achieve it is to wait on the first `map:gametime` event then manually query the values from the gamestate.
+* Item and hero names are returned as strings using the console format. Dota 2 Wiki has a list of translations for [items](http://dota2.gamepedia.com/Cheats#Item_names) and [heroes](http://dota2.gamepedia.com/Cheats#Hero_names).
+
 
 ## Configuring the Dota 2 Client
 
@@ -203,7 +225,7 @@ The following example is included in this repository, you can copy it straight i
 }
 ```
 
-For more information, see the [CS:GO Gamestate Integraton page](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Game_State_Integration)
+For more information, see the [CS:GO GameState Integration page](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Game_State_Integration)
 
 ## Caveats
 
@@ -211,4 +233,4 @@ The data provided is fairly extensive, but it is specific to the player running 
 
 ## Credits
 
-Thanks to [/u/antonpup](https://www.reddit.com/user/antonpup) for his [C# Gamestate Integration server](https://github.com/antonpup/Dota2GSI)
+Shoutout to [/u/antonpup](https://www.reddit.com/user/antonpup) for his [C# Gamestate Integration server](https://github.com/antonpup/Dota2GSI) and inadvertently letting me know this existed.
