@@ -122,8 +122,6 @@ var d2gsi = function(options) {
     });
 
     this.events = events;
-    this.port = port;
-    this.tokens = tokens;
     return this;
 }
 
