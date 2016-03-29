@@ -2,16 +2,23 @@
   "name": "dota2-gsi",
   "version": "1.0.0",
   "description": "Dota 2 Game State Integration server",
+  "author": "xzion",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "dota",
     "dota2",
+    "gamestate",
+    "integration",
     "steam"
   ],
-  "author": "xzion",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xzion/dota2-gsi"
+  },
   "dependencies": {
     "express": "4.x.x",
     "body-parser": "1.x.x",
