@@ -85,7 +85,7 @@ function Check_auth(tokens) {
     return function(req, res, next) {
         if (tokens) {
             if (req.body.auth && // Body has auth
-                (req.body.auth == tokens || // tokens was a single string or
+                (req.body.auth.token == tokens || // tokens was a single string or
                 (tokens.constructor === Array && // tokens was an array and
                 tokens.indexOf(req.body.auth) != -1))) { // containing the token
                 next();
