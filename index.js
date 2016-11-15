@@ -87,7 +87,7 @@ function Check_auth(tokens) {
             if (req.body.auth && // Body has auth
                 (req.body.auth.token == tokens || // tokens was a single string or
                 (tokens.constructor === Array && // tokens was an array and
-                tokens.indexOf(req.body.auth) != -1))) { // containing the token
+                tokens.indexOf(req.body.auth.token) != -1))) { // containing the token
                 next();
             } else {
                 // Not a valid auth, drop the message
