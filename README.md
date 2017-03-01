@@ -183,7 +183,64 @@ abilities:ability#:ability_active
 abilities:ability#:cooldown
 abilities:ability#:ultimate
 abilities:attributes:level
+
+buildings:radiant
+buildings:dire
+
 ```
+
+The buildings structure is slightly complicated. There is a hardcoded list of strings built in to the client used as a key to identify each building. Once a buiding is destroyed, it will no longer be emitted as part of the event.
+
+Radiant :
+```
+buildings:radiant:dota_goodguys_tower1_top
+buildings:radiant:dota_goodguys_tower2_top
+buildings:radiant:dota_goodguys_tower3_top
+buildings:radiant:dota_goodguys_tower4_top
+buildings:radiant:dota_goodguys_tower1_mid
+buildings:radiant:dota_goodguys_tower2_mid
+buildings:radiant:dota_goodguys_tower3_mid
+buildings:radiant:dota_goodguys_tower1_bot
+buildings:radiant:dota_goodguys_tower2_bot
+buildings:radiant:dota_goodguys_tower3_bot
+buildings:radiant:dota_goodguys_tower4_bot
+buildings:radiant:good_rax_range_top
+buildings:radiant:good_rax_melee_top
+buildings:radiant:good_rax_range_mid
+buildings:radiant:good_rax_melee_mid
+buildings:radiant:good_rax_range_bot
+buildings:radiant:good_rax_melee_bot
+```
+
+Dire :
+```
+buildings:dire:dota_badguys_tower1_top
+buildings:dire:dota_badguys_tower2_top
+buildings:dire:dota_badguys_tower3_top
+buildings:dire:dota_badguys_tower4_top
+buildings:dire:dota_badguys_tower1_mid
+buildings:dire:dota_badguys_tower2_mid
+buildings:dire:dota_badguys_tower3_mid
+buildings:dire:dota_badguys_tower1_bot
+buildings:dire:dota_badguys_tower2_bot
+buildings:dire:dota_badguys_tower3_bot
+buildings:dire:dota_badguys_tower4_bot
+buildings:dire:bad_rax_range_top
+buildings:dire:bad_rax_melee_top
+buildings:dire:bad_rax_range_mid
+buildings:dire:bad_rax_melee_mid
+buildings:dire:bad_rax_range_bot
+buildings:dire:bad_rax_melee_bot
+```
+
+Each building contains a health and max_health key, e.g.
+
+```
+buildings:dire:bad_rax_range_mid.health
+buildings:dire:bad_rax_range_mid.max_health
+
+```
+
 
 The gamestate object mirrors this structure. For example
 ```
@@ -217,6 +274,7 @@ The following example is included in this repository, you can copy it straight i
         "hero"          "1"
         "abilities"     "1"
         "items"         "1"
+        "buildings"     "1"
     }
     "auth"
     {
@@ -229,7 +287,7 @@ For more information, see the [CS:GO GameState Integration page](https://develop
 
 ## Caveats
 
-The data provided is fairly extensive, but it is specific to the player running the Dota 2 client. It does not provide any information to spectators or casters. The only way to get live information about all players in a game is to have each player configure their Dota client to point to the same `dota2-gsi` server. This somewhat limits the usefulness of the interface for tournament production; it's only really viable for LAN's. The other thing lacking is map position. I'd like to see Valve expand the interface in future to include live map position, and add `allplayers` sections similar to CS:GO, so casters and spectators can use the information for online games.
+The data provided is fairly extensive, but it is specific to the player running the Dota 2 client. The only way to get live information about all players in a game is to have each player configure their Dota client to point to the same `dota2-gsi` server, however valve have recently added the ability for casters and spectators to receive data about all clients. This functionality has not yet been implemented in dota2-gsi. This somewhat limits the usefulness of the interface for tournament production; it's only really viable for LAN's. The other thing lacking is map position. I'd like to see Valve expand the interface in future to include live map position, and add `allplayers` sections similar to CS:GO, so casters and spectators can use the information for online games.
 
 ## Credits
 
