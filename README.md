@@ -17,6 +17,7 @@ The server can be configured by passing an optional object to the constructor:
 ```
 {
     port: The port that the server should listen on (default: 3000),
+    ip: The IP address that the server should listen on (default: "0.0.0.0"),
     tokens: A single string or array of strings that are valid auth tokens (default: no auth required)
 }
 ```
