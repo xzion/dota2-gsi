@@ -34,7 +34,12 @@ var d2gsi = require('dota2-gsi');
 var server = new d2gsi();
 
 server.events.on('newclient', function(client) {
-    console.log("New client connection, IP address: " + client.ip + ", Auth token: " + client.auth);
+    console.log("New client connection, IP address: " + client.ip);
+    if (client.auth && client.auth.token) {
+        console.log("Auth token: " + client.auth.token);
+    } else {
+        console.log("No Auth token");
+    }
 
     client.on('player:activity', function(activity) {
         if (activity == 'playing') console.log("Game started!");
@@ -44,7 +49,7 @@ server.events.on('newclient', function(client) {
     });
     client.on('abilities:ability0:can_cast', function(can_cast) {
         if (can_cast) console.log("Ability0 off cooldown!");
-    })
+    });
 });
 ```
 
@@ -56,7 +61,12 @@ var server = new d2gsi();
 var clients = [];
 
 server.events.on('newclient', function(client) {
-    console.log("New client connection, IP address: " + client.ip + ", Auth token: " + client.auth);
+    console.log("New client connection, IP address: " + client.ip);
+    if (client.auth && client.auth.token) {
+        console.log("Auth token: " + client.auth.token);
+    } else {
+        console.log("No Auth token");
+    }
     clients.push(client);
 });
 
@@ -84,7 +94,7 @@ var server = new d2gsi({
 });
 
 server.events.on('newclient', function(client) {
-    if (client.auth == "6hCG4n_team1_player1") {
+    if (client.auth && client.auth.token == "6hCG4n_team1_player1") {
         console.log("Client 1:1 connected");
         client.on('hero:name', function(hero_name) {
             set_LAN_booth_display(1, 1, hero_name); // Set the displays on the TI booths for example
@@ -99,7 +109,7 @@ The server `events` member emits the `newclient` event whenever a new client con
 
 ```
 client.ip           - IP address of the client
-client.auth         - Auth token used by the client (may be null)
+client.auth.token   - Auth token used by the client (auth or auth.token may be null)
 client.gamestate    - The latest gamestate received from the client
 ```
 
