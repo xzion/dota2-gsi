@@ -61,6 +61,7 @@ module.exports = {
         },
         abilities: [],
         items: [],
+        buildings: [],
     },
     item_base: {
         name: null,

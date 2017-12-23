@@ -104,6 +104,7 @@ var d2gsi = function(options) {
     options = options || {};
     var port = options.port || 3000;
     var tokens = options.tokens || null;
+    var ip = options.ip || "0.0.0.0";
 
     var app = express();
     app.use(bodyParser.json());
@@ -117,7 +118,7 @@ var d2gsi = function(options) {
         Process_changes('added'),
         New_data);
 
-    var server = app.listen(port, function() {
+    var server = app.listen(port, ip, function() {
         console.log('Dota 2 GSI listening on port ' + server.address().port);
     });
 

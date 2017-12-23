@@ -1,6 +1,6 @@
 {
   "name": "dota2-gsi",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Dota 2 Game State Integration server",
   "author": "xzion",
   "license": "MIT",
