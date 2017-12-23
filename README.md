@@ -128,8 +128,8 @@ map:name
 map:matchid
 map:gametime
 map:clocktime
-map:isdaytime
-map:isnightstalker_night
+map:daytime
+map:nightstalker_night
 map:gamestate
 map:win_team
 map:customgamename
@@ -260,7 +260,7 @@ client.gamestate.items.slot0.name
 ```
 
 ## Quirks
-* The client does not announce all keys in an 'added' event, so there's no initial emit for some child attributes. This includes all of `provider`, `map`, and some of `player`. If you're trying to initialise values such as `map:isdaytime`, the easiest way to achieve it is to wait on the first `map:gametime` event then manually query the values from the gamestate.
+* The client does not announce all keys in an 'added' event, so there's no initial emit for some child attributes. This includes all of `provider`, `map`, and some of `player`. If you're trying to initialise values such as `map:daytime`, the easiest way to achieve it is to wait on the first `map:gametime` event then manually query the values from the gamestate.
 * Item and hero names are returned as strings using the console format. Dota 2 Wiki has a list of translations for [items](http://dota2.gamepedia.com/Cheats#Item_names) and [heroes](http://dota2.gamepedia.com/Cheats#Hero_names).
 
 
