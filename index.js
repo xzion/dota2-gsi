@@ -34,6 +34,8 @@ function Check_client(req, res, next) {
 
 function Emit_all(prefix, obj, emitter) {
     Object.keys(obj).forEach(function(key) {
+        // For scanning keys and testing
+        // emitter.emit("key", ""+prefix+key);
         // console.log("Emitting '"+prefix+key+"' - " + obj[key]);
         emitter.emit(prefix+key, obj[key]);
     });
@@ -53,6 +55,8 @@ function Recursive_emit(prefix, changed, body, emitter) {
                     // and doesn't contain each of the child keys
                     Emit_all(prefix+key+":", body[key], emitter);
                 } else {
+                    // For scanning keys and testing
+                    // emitter.emit("key", ""+prefix+key);
                     // console.log("Emitting '"+prefix+key+"' - " + body[key]);
                     emitter.emit(prefix+key, body[key]);
                 }

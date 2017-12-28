@@ -80,7 +80,7 @@ setInterval(function() {
 }, 10 * 1000); // Every ten seconds
 ```
 
-Identifying different clients. Unique auth tokens are the easiest way to do this.
+Identifying different clients using unique auth tokens. With the changes that allow observers/spectators to receive all data this usually isn't necessary any longer, unless you want to allow multiple spectators to join the server for redundancy.
 ```javascript
 var d2gsi = require('dota2-gsi');
 var server = new d2gsi({
@@ -114,150 +114,205 @@ client.auth.token   - Auth token used by the client (auth or auth.token may be n
 client.gamestate    - The latest gamestate received from the client
 ```
 
-Clients will emit the following events any time they change.
+Clients will emit the following events any time they change. This list may not be complete, as Valve can silently change the key names or add news ones at any time. If you discover some new outputs, please send a pull request!
+
+All ```team#``` references may either be ```team2``` for Radiant, or ```team3``` for Dire. All ```player#``` references range from ```player0``` to ```player9```, where 0-4 are the Radiant team and 5-9 are the Dire.
 
 ```
 newdata - The entire raw json object sent from the Dota client
-
-provider:name
-provider:appid
-provider:version
-provider:timestamp
-
-map:name
-map:matchid
-map:gametime
-map:clocktime
-map:daytime
-map:nightstalker_night
-map:gamestate
-map:win_team
-map:customgamename
-map:ward_purchase_cooldown
-
-player:steamid
-player:name
-player:activity
-player:kills
-player:deaths
-player:assists
-player:last_hits
-player:denies
-player:kill_streak
-player:team_name
-player:gold
-player:gold_reliable
-player:gold_unreliable
-player:gpm
-player:xpm
-
-hero:id
-hero:name
-hero:level
-hero:alive
-hero:respawn_seconds
-hero:buyback_cost
-hero:buyback_cooldown
-hero:health
-hero:max_health
-hero:health_percent
-hero:mana
-hero:max_mana
-hero:mana_percent
-hero:silenced
-hero:stunned
-hero:disarmed
-hero:magicimmune
-hero:hexed
-hero:muted
-hero:break
-hero:has_debuff
-
-items:slot#:name
-items:slot#:contains_rune
-items:slot#:can_cast
-items:slot#:cooldown
-items:slot#:passive
-items:slot#:charges
-items:stash#:name
-items:stash#:contains_rune
-items:stash#:can_cast
-items:stash#:cooldown
-items:stash#:passive
-items:stash#:charges
-
-abilities:ability#:name
-abilities:ability#:level
-abilities:ability#:can_cast
-abilities:ability#:passive
-abilities:ability#:ability_active
-abilities:ability#:cooldown
-abilities:ability#:ultimate
-abilities:attributes:level
-
-buildings:radiant
-buildings:dire
-
 ```
 
-The buildings structure is slightly complicated. There is a hardcoded list of strings built in to the client used as a key to identify each building. Once a buiding is destroyed, it will no longer be emitted as part of the event.
+<details>
+    <summary>Provider</summary>
 
-Radiant :
-```
-buildings:radiant:dota_goodguys_tower1_top
-buildings:radiant:dota_goodguys_tower2_top
-buildings:radiant:dota_goodguys_tower3_top
-buildings:radiant:dota_goodguys_tower4_top
-buildings:radiant:dota_goodguys_tower1_mid
-buildings:radiant:dota_goodguys_tower2_mid
-buildings:radiant:dota_goodguys_tower3_mid
-buildings:radiant:dota_goodguys_tower1_bot
-buildings:radiant:dota_goodguys_tower2_bot
-buildings:radiant:dota_goodguys_tower3_bot
-buildings:radiant:dota_goodguys_tower4_bot
-buildings:radiant:good_rax_range_top
-buildings:radiant:good_rax_melee_top
-buildings:radiant:good_rax_range_mid
-buildings:radiant:good_rax_melee_mid
-buildings:radiant:good_rax_range_bot
-buildings:radiant:good_rax_melee_bot
-```
+    provider:name
+    provider:appid
+    provider:version
+    provider:timestamp
+</details>
 
-Dire :
-```
-buildings:dire:dota_badguys_tower1_top
-buildings:dire:dota_badguys_tower2_top
-buildings:dire:dota_badguys_tower3_top
-buildings:dire:dota_badguys_tower4_top
-buildings:dire:dota_badguys_tower1_mid
-buildings:dire:dota_badguys_tower2_mid
-buildings:dire:dota_badguys_tower3_mid
-buildings:dire:dota_badguys_tower1_bot
-buildings:dire:dota_badguys_tower2_bot
-buildings:dire:dota_badguys_tower3_bot
-buildings:dire:dota_badguys_tower4_bot
-buildings:dire:bad_rax_range_top
-buildings:dire:bad_rax_melee_top
-buildings:dire:bad_rax_range_mid
-buildings:dire:bad_rax_melee_mid
-buildings:dire:bad_rax_range_bot
-buildings:dire:bad_rax_melee_bot
-```
+<details>
+    <summary>Map</summary>
 
-Each building contains a health and max_health key, e.g.
+    map:clock_time
+    map:daytime
+    map:dire_ward_purchase_cooldown
+    map:game_state
+    map:game_time
+    map:name
+    map:matchid
+    map:radiant_ward_purchase_cooldown
+    map:nightstalker_night
+    map:roshan_state
+    map:roshan_state_end_seconds
+    map:win_team
+    map:customgamename
+</details>
 
-```
-buildings:dire:bad_rax_range_mid.health
-buildings:dire:bad_rax_range_mid.max_health
+<details>
+    <summary>Player</summary>
 
-```
+    player:team#:player#:assists
+    player:team#:player#:camps_stacked
+    player:team#:player#:deaths
+    player:team#:player#:denies
+    player:team#:player#:gold
+    player:team#:player#:gold_reliable
+    player:team#:player#:gold_unreliable
+    player:team#:player#:gpm
+    player:team#:player#:hero_damage
+    player:team#:player#:kill_list:victimid_#
+    player:team#:player#:kill_streak
+    player:team#:player#:kills
+    player:team#:player#:last_hits
+    player:team#:player#:net_worth
+    player:team#:player#:pro_name
+    player:team#:player#:runes_activated
+    player:team#:player#:support_gold_spent
+    player:team#:player#:wards_destroyed
+    player:team#:player#:wards_placed
+    player:team#:player#:wards_purchased
+    player:team#:player#:xpm
+</details>
 
+<details>
+    <summary>Hero</summary>
+
+    hero:team#:player#:alive
+    hero:team#:player#:break
+    hero:team#:player#:buyback_cost
+    hero:team#:player#:buyback_cooldown
+    hero:team#:player#:disarmed
+    hero:team#:player#:has_debuff
+    hero:team#:player#:health
+    hero:team#:player#:health_percent
+    hero:team#:player#:hexed
+    hero:team#:player#:id
+    hero:team#:player#:level
+    hero:team#:player#:magicimmune
+    hero:team#:player#:mana
+    hero:team#:player#:mana_percent
+    hero:team#:player#:max_health
+    hero:team#:player#:max_mana
+    hero:team#:player#:muted
+    hero:team#:player#:name
+    hero:team#:player#:respawn_seconds
+    hero:team#:player#:selected_unit
+    hero:team#:player#:silenced
+    hero:team#:player#:stunned
+    hero:team#:player#:talent_# (1-8)
+    hero:team#:player#:xpos
+    hero:team#:player#:ypos
+</details>
+
+<details>
+    <summary>Items</summary>
+
+    items:team#:player#:slot#:can_cast
+    items:team#:player#:slot#:charges
+    items:team#:player#:slot#:contains_rune
+    items:team#:player#:slot#:cooldown
+    items:team#:player#:slot#:name
+    items:team#:player#:slot#:passive
+    items:team#:player#:slot#:purchaser
+
+    items:team#:player#:stash#:can_cast
+    items:team#:player#:stash#:charges
+    items:team#:player#:stash#:contains_rune
+    items:team#:player#:stash#:cooldown
+    items:team#:player#:stash#:name
+    items:team#:player#:stash#:passive
+    items:team#:player#:stash#:purchaser
+</details>
+
+<details>
+    <summary>Abilities</summary>
+
+    abilities:team#:player#:ability#:ability_active
+    abilities:team#:player#:ability#:can_cast
+    abilities:team#:player#:ability#:cooldown
+    abilities:team#:player#:ability#:level
+    abilities:team#:player#:ability#:name
+    abilities:team#:player#:ability#:passive
+    abilities:team#:player#:ability#:ultimate
+</details>
+
+<details>
+    <summary>Buildings</summary>
+
+    buildings:radiant:dota_goodguys_tower#_top.health (1-4)
+    buildings:radiant:dota_goodguys_tower#_top.max_health
+    buildings:radiant:dota_goodguys_tower#_mid.health (1-3)
+    buildings:radiant:dota_goodguys_tower#_mid.max_health
+    buildings:radiant:dota_goodguys_tower#_bot.health (1-4)
+    buildings:radiant:dota_goodguys_tower#_bot.max_health
+    buildings:radiant:good_rax_range_top.health
+    buildings:radiant:good_rax_range_top.max_health
+    buildings:radiant:good_rax_melee_top.health
+    buildings:radiant:good_rax_melee_top.max_health
+    buildings:radiant:good_rax_range_mid.health
+    buildings:radiant:good_rax_range_mid.max_health
+    buildings:radiant:good_rax_melee_mid.health
+    buildings:radiant:good_rax_melee_mid.max_health
+    buildings:radiant:good_rax_range_bot.health
+    buildings:radiant:good_rax_range_bot.max_health
+    buildings:radiant:good_rax_melee_bot.health
+    buildings:radiant:good_rax_melee_bot.max_health
+    buildings:radiant:dota_goodguys_fort:health
+    buildings:radiant:dota_goodguys_fort:max_health
+
+    buildings:dire:dota_badguys_tower#_top.health (1-4)
+    buildings:dire:dota_badguys_tower#_top.max_health
+    buildings:dire:dota_badguys_tower#_mid.health (1-3)
+    buildings:dire:dota_badguys_tower#_mid.max_health
+    buildings:dire:dota_badguys_tower#_bot.health (1-4)
+    buildings:dire:dota_badguys_tower#_bot.max_health
+    buildings:dire:bad_rax_range_top.health
+    buildings:dire:bad_rax_range_top.max_health
+    buildings:dire:bad_rax_melee_top.health
+    buildings:dire:bad_rax_melee_top.max_health
+    buildings:dire:bad_rax_range_mid.health
+    buildings:dire:bad_rax_range_mid.max_health
+    buildings:dire:bad_rax_melee_mid.health
+    buildings:dire:bad_rax_melee_mid.max_health
+    buildings:dire:bad_rax_range_bot.health
+    buildings:dire:bad_rax_range_bot.max_health
+    buildings:dire:bad_rax_melee_bot.health
+    buildings:dire:bad_rax_melee_bot.max_health
+    buildings:dire:dota_badguys_fort:health
+    buildings:dire:dota_badguys_fort:max_health
+</details>
+
+<details>
+    <summary>Draft</summary>
+
+    draft:activeteam
+    draft:activeteam_time_remaining
+    draft:dire_bonus_time
+    draft:pick
+    draft:radiant_bonus_time
+    draft:team#:home_team
+    draft:team#:ban#_class (0-5)
+    draft:team#:ban#_id (0-5)
+    draft:team#:pick#_class (0-4)
+    draft:team#:pick#_id (0-4)
+</details>
+
+<details>
+    <summary>Wearables</summary>
+
+    wearables:team#:player#:wearable#
+    wearables:team#:player#:style#
+</details>
+<br>
 
 The gamestate object mirrors this structure. For example
 ```
-client.gamestate.hero.mana_percent
-client.gamestate.items.slot0.name
+client.gamestate.abilities.team2.player0.ability1.can_cast
+client.gamestate.buildings.dire.dota_badguys_fort.health
 ```
+
+Child members in the gamestate object may be null, so use ```try/catch``` statements when querying it.
 
 ## Quirks
 * The client does not announce all keys in an 'added' event, so there's no initial emit for some child attributes. This includes all of `provider`, `map`, and some of `player`. If you're trying to initialise values such as `map:daytime`, the easiest way to achieve it is to wait on the first `map:gametime` event then manually query the values from the gamestate.
@@ -279,13 +334,15 @@ The following example is included in this repository, you can copy it straight i
     "heartbeat"         "30.0"
     "data"
     {
+        "buildings"     "1"
         "provider"      "1"
         "map"           "1"
         "player"        "1"
         "hero"          "1"
         "abilities"     "1"
         "items"         "1"
-        "buildings"     "1"
+        "draft"         "1"
+        "wearables"     "1"
     }
     "auth"
     {
@@ -298,7 +355,7 @@ For more information, see the [CS:GO GameState Integration page](https://develop
 
 ## Caveats
 
-The data provided is fairly extensive, but it is specific to the player running the Dota 2 client. The only way to get live information about all players in a game is to have each player configure their Dota client to point to the same `dota2-gsi` server, however valve have recently added the ability for casters and spectators to receive data about all clients. This functionality has not yet been implemented in dota2-gsi. This somewhat limits the usefulness of the interface for tournament production; it's only really viable for LAN's. The other thing lacking is map position. I'd like to see Valve expand the interface in future to include live map position, and add `allplayers` sections similar to CS:GO, so casters and spectators can use the information for online games.
+Full player data is now available, but only to spectators and observers (as one would expect). The existing single player GSI data is still available, however the names of events are different to what is listed above. Please refer to previous versions of this readme or query uncomment to console logging in index.js to see which keys are available
 
 ## Credits
 
