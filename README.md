@@ -321,7 +321,7 @@ Child members in the gamestate object may be null, so use ```try/catch``` statem
 
 ## Configuring the Dota 2 Client
 
-To configure the Dota client to report gamestate, you need to add a config file in `steamapps\common\dota 2 beta\game\dota\cfg\gamestate_integration\`. The file must use the name pattern called `gamestate_integration_*.cfg`, for example `gamestate_integration_dota2-gsi.cfg`.
+To configure the Dota client to report gamestate, you need to add a config file in `steamapps\common\dota 2 beta\game\dota\cfg\gamestate_integration\`. The file must use the name pattern called `gamestate_integration_*.cfg`, for example `gamestate_integration_dota2-gsi.cfg`. Furthermore after Dota 2 Update March 11'th 2022, the game state integration has to be enabled in the launch options with the `-gamestateintegration`.
 
 The following example is included in this repository, you can copy it straight into your Dota directory to get started.
 ```
