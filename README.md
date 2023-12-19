@@ -292,8 +292,8 @@ newdata - The entire raw json object sent from the Dota client
     draft:pick
     draft:radiant_bonus_time
     draft:team#:home_team
-    draft:team#:ban#_class (0-5)
-    draft:team#:ban#_id (0-5)
+    draft:team#:ban#_class (0-6)
+    draft:team#:ban#_id (0-6)
     draft:team#:pick#_class (0-4)
     draft:team#:pick#_id (0-4)
 </details>
